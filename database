@@ -1,0 +1,50 @@
+from sqlite3 import connect
+
+
+connection = connect('./data.db')
+
+cursor = connection.cursor()
+
+cursor.execute('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)')
+connection.commit()
+
+def add_user(email, password, username):
+    cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, password))
+    connection.commit()
+
+
+def get_all_users():
+    connection = connect('./data.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users')
+    data = cursor.fetchall()
+    return [
+        {
+            'id': row[0],
+            'username': row[1],
+            'email': row[2],
+            'password': row[3],
+        }
+        for row in data
+    ]
+
+def get_user_by_username(username):
+    for user in get_all_users():
+        if user['username'] == username: 
+            return user
+    return None
+
+
+def add_users_loop():
+    while True:
+        username = input('username: ')
+        email = input('email: ')
+        password = input('password: ')
+        add_user(email, password, username)
+
+
+if __name__ == '__main__':
+    # add_user('wow@gmail.com', 'wowmia', 'jinglebells')
+    # print(get_all_users())
+    # add_users_loop()
+    ...
