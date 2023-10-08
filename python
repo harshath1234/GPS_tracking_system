@@ -1,0 +1,27 @@
+from flask import Flask, render_template, request
+
+from db import get_user_by_username
+
+app = Flask(__name__)
+
+@app.route('/')
+def _login():
+    username = request.args.get('username')
+    password = request.args.get('password')
+    if not username:
+        return render_template('login.html')
+    user = get_user_by_username(username)
+    if not user:
+        return 'USER NOT FOUND'
+    ACTUAL_PASSWORD = user['password']
+    if password == ACTUAL_PASSWORD:
+        return render_template('location.html')
+    else:
+        return render_template('login.html', wrongpass=True)
+
+@app.route('/heartbeat')
+def _hb():
+    return 'ok'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
